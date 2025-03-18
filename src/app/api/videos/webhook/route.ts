@@ -119,8 +119,6 @@ export const POST = async (request: Request) => {
 				asset_id: string
 			}
 
-			console.log('track ready')
-
 			const assetId = data.asset_id
 			const trackId = data.id
 			const status = data.status
@@ -133,7 +131,7 @@ export const POST = async (request: Request) => {
 				.update(videos)
 				.set({
 					muxTrackId: trackId,
-					muxStatus: status,
+					muxTrackStatus: status,
 				})
 				.where(eq(videos.muxAssetId, assetId))
 
