@@ -96,6 +96,15 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
 		},
 	})
 
+	const generateThumbnail = trpc.videos.generateThumbnail.useMutation({
+		onSuccess: () => {
+			toast.success('Background job started', { description: 'It may take some time' })
+		},
+		onError: () => {
+			toast.error('Something went wrong')
+		},
+	})
+
 	const form = useForm<z.infer<typeof videoUpdateSchema>>({
 		resolver: zodResolver(videoUpdateSchema),
 		defaultValues: video,
@@ -105,7 +114,7 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
 		update.mutate(data)
 	}
 
-	const fullUrl = `${process.env.VERCEL_URL || 'http://localhost:3000/'}/videos/${videoId}`
+	const fullUrl = `${process.env.VERCEL_URL || 'http://localhost:3000'}/studio/videos/${videoId}`
 
 	const onCopy = async () => {
 		await navigator.clipboard.writeText(fullUrl)
@@ -207,7 +216,7 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
 															<ImagePlusIcon className="size-4 mr-1" />
 															Change
 														</DropdownMenuItem>
-														<DropdownMenuItem className="cursor-pointer">
+														<DropdownMenuItem className="cursor-pointer" onClick={() => generateThumbnail.mutate()}>
 															<SparklesIcon className="size-4 mr-1" />
 															AI-Generated
 														</DropdownMenuItem>
@@ -259,7 +268,7 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
 										<div className="flex flex-col gap-y-1">
 											<p className="text-muted-foreground tex-xs">Video link</p>
 											<div className="flex items-center gap-x-2">
-												<Link href={`/videos/${video.id}`}>
+												<Link href={`${video.id}`}>
 													<p className="line-clamp-1 text-sm text-blue-500">{fullUrl}</p>
 												</Link>
 												<Button
